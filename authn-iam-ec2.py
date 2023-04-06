@@ -20,7 +20,7 @@ conjur_acct = 'cyberarkdemo'
 conjur_service_id = "prod"
 secretID = "aws-ec2/database/password"
 host = "host/aws-ec2/735280068473/ConjurAWSRoleEC2"
-cert = True
+cert = "/path/to/conjur.pem"
 
 #get authentication token by providing AWSv4 signature, Conjur will validate the signature against AWS
 authenticate_url = "{conjur_appliance_url}/authn-iam/{conjur_service_id}/{account}/{host}/authenticate".format(
