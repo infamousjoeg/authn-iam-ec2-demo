@@ -17,13 +17,15 @@ signed_headers = headers_for_signed_url(assumeConjurRole["Credentials"]["AccessK
 #declare and init Conjur variables
 conjur_url = "https://dap.joegarcia.dev"
 conjur_acct = 'cyberarkdemo'
+conjur_service_id = "prod"
 secretID = "aws-ec2/database/password"
 host = "host/aws-ec2/735280068473/ConjurAWSRoleEC2"
 cert = True
 
 #get authentication token by providing AWSv4 signature, Conjur will validate the signature against AWS
-authenticate_url = "{conjur_appliance_url}/authn-iam/prod/{account}/{host}/authenticate".format(
+authenticate_url = "{conjur_appliance_url}/authn-iam/{conjur_service_id}/{account}/{host}/authenticate".format(
                         conjur_appliance_url = conjur_url,
+                        conjur_service_id = conjur_service_id,
                         account = conjur_acct,
                         host = urllib.parse.quote_plus(host)
                     )
