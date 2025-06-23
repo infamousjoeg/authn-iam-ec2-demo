@@ -31,5 +31,5 @@ conjur = create_conjur_iam_client(
     APPLIANCE_URL, ACCOUNT, SERVICE_ID, USERNAME, CERT_FILE
 )
 secret_value = conjur.get(SECRET_ID)
-print("Password:" + secret_value)
+print("Password: " + secret_value)
 
