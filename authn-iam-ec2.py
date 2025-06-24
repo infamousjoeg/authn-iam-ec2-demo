@@ -1,50 +1,41 @@
 #!/usr/bin/env python3
+"""Example EC2 script using the Conjur AWS IAM Client for Python."""
 
-import os, boto3, base64, json, requests
-import urllib.parse
-from signer import headers_for_signed_url
+import os
+from conjur_iam_client import (
+    create_conjur_iam_api_key,
+    get_conjur_iam_session_token,
+    create_conjur_iam_client_from_env,
+)
 
-# Create session and get credentials from AWS IMDS
-session = boto3.Session()
-credentials = session.get_credentials()
+# Read required configuration from the environment
+APPLIANCE_URL = os.environ["CONJUR_APPLIANCE_URL"]
+# Ensure the appliance URL ends with /api as required for Conjur Cloud
+if not APPLIANCE_URL.rstrip("/").endswith("api"):
+    APPLIANCE_URL = APPLIANCE_URL.rstrip("/") + "/api"
+SERVICE_ID = os.environ["AUTHN_IAM_SERVICE_ID"]
+USERNAME = os.environ["CONJUR_AUTHN_LOGIN"]
+ACCOUNT = os.environ["CONJUR_ACCOUNT"]
+SECRET_ID = os.environ["CONJUR_SECRET_ID"]
 
-# Get signed AWSv4 headers from STS GetCallerID Function
-# NOTE: region must remain us-east-1 because Conjur is hard-coded
-# to verify signed headers against that region's STS service
-signed_headers = headers_for_signed_url(credentials.access_key, 
-    credentials.secret_key, 
-    credentials.token,
-    'us-east-1')
+# Use a certificate only when connecting to a self-hosted Conjur instance.
+# If CONJUR_CERT_FILE is not set, we assume Conjur Cloud and skip certificate verification.
+CERT_FILE = os.getenv("CONJUR_CERT_FILE") or None
 
-# Declare and init Conjur variables
-conjur_url = "https://dap.joegarcia.dev"
-conjur_acct = 'cyberarkdemo'
-conjur_service_id = "prod"
-secretID = "aws-ec2/database/password"
-host = "host/aws-ec2/735280068473/ConjurAWSRoleEC2"
-cert = "/path/to/conjur.pem" # Can also be a boolean value: True or False
+# 1- Create the AWS signature header used for IAM authentication
+api_key = create_conjur_iam_api_key()
+print(api_key)
 
-# Get authentication token by providing AWSv4 signature,
-# Conjur will validate the signature against AWS
-authenticate_url = "{conjur_appliance_url}/authn-iam/{conjur_service_id}/{account}/{host}/authenticate".format(
-                        conjur_appliance_url = conjur_url,
-                        conjur_service_id = conjur_service_id,
-                        account = conjur_acct,
-                        host = urllib.parse.quote_plus(host)
-                    )
-print("Authenticate URL: {}".format(authenticate_url))
-authResponse = requests.post(authenticate_url, data=signed_headers, verify=cert)
-print("Authentication Response: " + str(authResponse.status_code))
-# Convert auth token to base64
-token_b64 = base64.b64encode(authResponse.text.encode('utf-8')).decode("utf-8")
+# 2- Exchange the signature for a Conjur session token
+session_token = get_conjur_iam_session_token(
+    APPLIANCE_URL, ACCOUNT, SERVICE_ID, USERNAME, CERT_FILE
+)
+print(session_token)
 
-# Now we can retrieve secrets until our heart's content
-retrieve_variable_url = "{conjur_appliance_url}/secrets/{account}/variable/".format(
-                            conjur_appliance_url = conjur_url,
-                            account = conjur_acct
-                            )
-password = requests.get(retrieve_variable_url + secretID,
-                    headers={'Authorization' : "Token token=\"" + token_b64 + "\""}, verify=cert).text
+# 3- Instantiate the Conjur client from environment variables
+conjur = create_conjur_iam_client_from_env()
+secret_value = conjur.get(SECRET_ID)
+if isinstance(secret_value, bytes):
+    secret_value = secret_value.decode()
+print("Password: " + secret_value)
 
-result = 'Password:' + password
-print(result)
