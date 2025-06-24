@@ -21,14 +21,16 @@ This repository contains a minimal example showing how an EC2 instance can authe
 
 ## Configuration
 
-The demo script reads the following environment variables.  Default values are provided in `authn-iam-ec2.py` for convenience, but they should be overridden for a real deployment.
+The demo script reads the following environment variables.  Default values were removed so these must be defined before running the script.
 
 - `CONJUR_APPLIANCE_URL` – URL of the Conjur appliance or Conjur Cloud instance
 - `AUTHN_IAM_SERVICE_ID` – service ID of the IAM authenticator
 - `CONJUR_AUTHN_LOGIN` – Conjur host identity (e.g., `host/aws-ec2/<account-id>/<role-name>`)
 - `CONJUR_ACCOUNT` – Conjur account name (usually `conjur`)
-- `CONJUR_CERT_FILE` – (optional) path to the Conjur SSL certificate; only
-  required when connecting to a self‑hosted Conjur instance
+- `CONJUR_CERT_FILE` – path to the Conjur SSL certificate when connecting to a
+  self‑hosted Conjur instance
+- `TARGET` – set to `cloud` when using Conjur Cloud (the default), otherwise
+  the script expects `CONJUR_CERT_FILE`
 - `CONJUR_SECRET_ID` – identifier of the secret to fetch
 
 Export these variables before running the script, for example:
@@ -53,7 +55,8 @@ The script will:
 
 1. Generate an AWS signature for IAM authentication.
 2. Exchange the signature for a Conjur session token.
-3. Instantiate a Conjur client and fetch the secret specified by `CONJUR_SECRET_ID`.
+3. Instantiate a Conjur client using the environment variables and fetch the
+   secret specified by `CONJUR_SECRET_ID`.
 
 ## Docker
 
