@@ -13,7 +13,9 @@ APPLIANCE_URL = os.getenv("CONJUR_APPLIANCE_URL", "https://dap.joegarcia.dev")
 SERVICE_ID = os.getenv("AUTHN_IAM_SERVICE_ID", "prod")
 USERNAME = os.getenv("CONJUR_AUTHN_LOGIN", "host/aws-ec2/735280068473/ConjurAWSRoleEC2")
 ACCOUNT = os.getenv("CONJUR_ACCOUNT", "cyberarkdemo")
-CERT_FILE = os.getenv("CONJUR_CERT_FILE", "/path/to/conjur.pem")
+# Conjur Cloud does not require a certificate file.  Leave CONJUR_CERT_FILE
+# unset unless communicating with a self-hosted Conjur instance.
+CERT_FILE = os.getenv("CONJUR_CERT_FILE")
 SECRET_ID = os.getenv("CONJUR_SECRET_ID", "aws-ec2/database/password")
 
 # 1- Create the AWS signature header used for IAM authentication

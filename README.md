@@ -27,7 +27,8 @@ The demo script reads the following environment variables.  Default values are p
 - `AUTHN_IAM_SERVICE_ID` – service ID of the IAM authenticator
 - `CONJUR_AUTHN_LOGIN` – Conjur host identity (e.g., `host/aws-ec2/<account-id>/<role-name>`)
 - `CONJUR_ACCOUNT` – Conjur account name (usually `conjur`)
-- `CONJUR_CERT_FILE` – path to the Conjur SSL certificate
+- `CONJUR_CERT_FILE` – (optional) path to the Conjur SSL certificate; only
+  required when connecting to a self‑hosted Conjur instance
 - `CONJUR_SECRET_ID` – identifier of the secret to fetch
 
 Export these variables before running the script, for example:
@@ -37,7 +38,6 @@ export CONJUR_APPLIANCE_URL=https://<subdomain>.secretsmgr.cyberark.cloud
 export AUTHN_IAM_SERVICE_ID=aws-prod
 export CONJUR_AUTHN_LOGIN=host/data/iam-ec2/111111111111/IAMConjurRole
 export CONJUR_ACCOUNT=conjur
-export CONJUR_CERT_FILE=/etc/ssl/certs/conjur.pem
 export CONJUR_SECRET_ID=aws-ec2/database/password
 ```
 
@@ -71,7 +71,6 @@ docker run --rm \
   -e AUTHN_IAM_SERVICE_ID \
   -e CONJUR_AUTHN_LOGIN \
   -e CONJUR_ACCOUNT \
-  -e CONJUR_CERT_FILE \
   -e CONJUR_SECRET_ID \
   authn-iam-demo
 ```
