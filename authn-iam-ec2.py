@@ -35,5 +35,7 @@ print(session_token)
 # 3- Instantiate the Conjur client from environment variables
 conjur = create_conjur_iam_client_from_env()
 secret_value = conjur.get(SECRET_ID)
+if isinstance(secret_value, bytes):
+    secret_value = secret_value.decode()
 print("Password: " + secret_value)
 
