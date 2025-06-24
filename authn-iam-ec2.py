@@ -15,11 +15,9 @@ USERNAME = os.environ["CONJUR_AUTHN_LOGIN"]
 ACCOUNT = os.environ["CONJUR_ACCOUNT"]
 SECRET_ID = os.environ["CONJUR_SECRET_ID"]
 
-# Use a certificate only when connecting to a self-hosted Conjur instance
-if os.getenv("TARGET", "cloud") == "cloud":
-    CERT_FILE = None
-else:
-    CERT_FILE = os.environ["CONJUR_CERT_FILE"]
+# Use a certificate only when connecting to a self-hosted Conjur instance.
+# If CONJUR_CERT_FILE is not set, we assume Conjur Cloud and skip certificate verification.
+CERT_FILE = os.getenv("CONJUR_CERT_FILE") or None
 
 # 1- Create the AWS signature header used for IAM authentication
 api_key = create_conjur_iam_api_key()

@@ -28,9 +28,7 @@ The demo script reads the following environment variables.  Default values were 
 - `CONJUR_AUTHN_LOGIN` – Conjur host identity (e.g., `host/aws-ec2/<account-id>/<role-name>`)
 - `CONJUR_ACCOUNT` – Conjur account name (usually `conjur`)
 - `CONJUR_CERT_FILE` – path to the Conjur SSL certificate when connecting to a
-  self‑hosted Conjur instance
-- `TARGET` – set to `cloud` when using Conjur Cloud (the default), otherwise
-  the script expects `CONJUR_CERT_FILE`
+  self‑hosted Conjur instance. If omitted, the script assumes Conjur Cloud.
 - `CONJUR_SECRET_ID` – identifier of the secret to fetch
 
 Export these variables before running the script, for example:
