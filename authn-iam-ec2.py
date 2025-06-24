@@ -10,6 +10,9 @@ from conjur_iam_client import (
 
 # Read required configuration from the environment
 APPLIANCE_URL = os.environ["CONJUR_APPLIANCE_URL"]
+# Ensure the appliance URL ends with /api as required for Conjur Cloud
+if not APPLIANCE_URL.rstrip("/").endswith("api"):
+    APPLIANCE_URL = APPLIANCE_URL.rstrip("/") + "/api"
 SERVICE_ID = os.environ["AUTHN_IAM_SERVICE_ID"]
 USERNAME = os.environ["CONJUR_AUTHN_LOGIN"]
 ACCOUNT = os.environ["CONJUR_ACCOUNT"]

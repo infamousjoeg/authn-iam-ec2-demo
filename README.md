@@ -23,7 +23,9 @@ This repository contains a minimal example showing how an EC2 instance can authe
 
 The demo script reads the following environment variables.  Default values were removed so these must be defined before running the script.
 
-- `CONJUR_APPLIANCE_URL` – URL of the Conjur appliance or Conjur Cloud instance
+- `CONJUR_APPLIANCE_URL` – URL of the Conjur API endpoint. When using Conjur
+  Cloud this must include `/api`, for example:
+  `https://<subdomain>.secretsmgr.cyberark.cloud/api`
 - `AUTHN_IAM_SERVICE_ID` – service ID of the IAM authenticator
 - `CONJUR_AUTHN_LOGIN` – Conjur host identity (e.g., `host/aws-ec2/<account-id>/<role-name>`)
 - `CONJUR_ACCOUNT` – Conjur account name (usually `conjur`)
@@ -34,7 +36,7 @@ The demo script reads the following environment variables.  Default values were 
 Export these variables before running the script, for example:
 
 ```bash
-export CONJUR_APPLIANCE_URL=https://<subdomain>.secretsmgr.cyberark.cloud
+export CONJUR_APPLIANCE_URL=https://<subdomain>.secretsmgr.cyberark.cloud/api
 export AUTHN_IAM_SERVICE_ID=aws-prod
 export CONJUR_AUTHN_LOGIN=host/data/iam-ec2/111111111111/IAMConjurRole
 export CONJUR_ACCOUNT=conjur
@@ -64,7 +66,8 @@ A simple `Dockerfile` is provided for experimentation.  Build the image with:
 docker build -t authn-iam-demo .
 ```
 
-Run the container while passing the required environment variables:
+Run the container while passing the required environment variables. Ensure
+`CONJUR_APPLIANCE_URL` includes the `/api` suffix:
 
 ```bash
 docker run --rm \
